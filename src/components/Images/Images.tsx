@@ -16,7 +16,7 @@ const Images: React.FC<IImages> = ({ isLoading, images, onClick }) => {
     <section className="images">
       <div className="container images__container">
         {
-          isLoading ? <div> Загрузка... </div> :
+          isLoading ? <div> Загрузка... </div> : !images.length ? <div>Ничего не найдено :(</div> :
             images.map(({ id, previewURL, largeImageURL, tags }: IImagePixAbay) => {
               return <ImageItem key={id} onClick={ onClick?.bind(null, largeImageURL, tags) } src={previewURL} name={tags} />
             })
