@@ -61,7 +61,10 @@ export class App extends Component<{}, IAppState> {
 
   componentDidUpdate = (_: {}, prevState: IAppState) => {
 
-    if (prevState.page !== this.state.page && this.state.page >= 1 && this.state.page <= this.state.allPages) {
+    if (prevState.page !== this.state.page 
+      && this.state.page >= 1 && this.state.page <= this.state.allPages
+      && this.state.images
+      ) {
       const { query, page } = this.state
 
       this.setState({ isLoading: true })
@@ -73,7 +76,6 @@ export class App extends Component<{}, IAppState> {
       this.input.current?.focus()
     }
   }
-
 
   onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ query: e.target.value })
@@ -107,12 +109,12 @@ export class App extends Component<{}, IAppState> {
   }
 
   setNextPage = () => {
-    if (this.state.page >= this.state.allPages) return
+    if (this.state.page >= this.state.allPages || this.state.images) return
     this.setState({ page: this.state.page + 1 })
   }
 
   setPrevPage = () => {
-    if (this.state.page <= 1) return
+    if (this.state.page <= 1 || this.state.images) return
     this.setState({ page: this.state.page - 1 })
   }
 
