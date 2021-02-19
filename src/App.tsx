@@ -16,6 +16,7 @@ interface IAppState {
   query: string,
   prevQuery: string,
   page: number,
+  allPages: number,
   modal: {
     isOpen: boolean
   },
@@ -37,6 +38,7 @@ export class App extends Component<{}, IAppState> {
       query: '',
       prevQuery: '',
       page: 1,
+      allPages: 0,
       modal: {
         isOpen: false
       },
@@ -51,15 +53,15 @@ export class App extends Component<{}, IAppState> {
 
 
   componentDidMount = () => {
-    makeRequest(`${URL}&q=${this.state.prevQuery}`).then(({ hits: images }: IResponsePixAbay) => {
-      this.setState({ isLoading: false, images })
+    makeRequest(`${URL}&q=${this.state.prevQuery}`).then(({ total, hits: images }: IResponsePixAbay) => {
+      this.setState({ allPages: Math.ceil(total / 20), isLoading: false, images })
     })
     this.input.current?.focus()
   }
 
   componentDidUpdate = (_: {}, prevState: IAppState) => {
 
-    if (prevState.page !== this.state.page && this.state.page >= 1) {
+    if (prevState.page !== this.state.page && this.state.page >= 1 && this.state.page <= this.state.allPages) {
       const { query, page } = this.state
 
       this.setState({ isLoading: true })
@@ -67,6 +69,7 @@ export class App extends Component<{}, IAppState> {
       makeRequest(`${URL}&q=${query}&page=${page}`).then(({ hits: images }: IResponsePixAbay) => {
         this.setState({ isLoading: false, images })
       })
+
       this.input.current?.focus()
     }
   }
@@ -104,6 +107,7 @@ export class App extends Component<{}, IAppState> {
   }
 
   setNextPage = () => {
+    if (this.state.page >= this.state.allPages) return
     this.setState({ page: this.state.page + 1 })
   }
 
